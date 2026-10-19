@@ -58,24 +58,8 @@ No Xcode project or package manager is required. A compatible Swift toolchain an
 
 Release builds optimize for size, use whole-module optimization and linker dead stripping, and strip local symbols before signing. Icon PNG payloads are losslessly optimized, preserving their pixel content and available resolutions.
 
-## Test
-
-```sh
-./test.command
-codesign --verify --deep --strict LocalWatch.app
-```
-
-Tests require Python 3 and free ports 18796 / 18797. They cover URL validation, title extraction, HTTP 200 / 503, redirect boundaries, offline detection, and listener discovery using a temporary local server. They do not verify visual appearance, login behavior, or timer transitions in the running app.
-
-## Source layout
-
-| File | Purpose |
-| --- | --- |
-| `Source/App.swift` | Menu bar, panel, settings, language switching, idle checks |
-| `Source/Monitor.swift` | Local URL validation, HTTP probes, listener discovery |
-| `Source/Tests.swift` | Network and URL boundary tests |
-| `Source/test_server.py` | Temporary HTTP test server |
-| `Source/Icon.swift` | Icon generation source |
-| `build.command` | Size-optimized build and local signing |
-
 See [CHANGELOG.md](CHANGELOG.md) for release history.
+
+## Support
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/ethan6945)

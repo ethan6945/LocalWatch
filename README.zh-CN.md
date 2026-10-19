@@ -51,24 +51,8 @@ open LocalWatch.app
 
 无需 Xcode 工程或第三方依赖。脚本生成应用并进行本地签名；遇到 SwiftUI 宏插件不可用时，会尝试已安装的兼容 SDK。需要兼容的 Swift 工具链及 macOS SDK。
 
-## 测试
-
-```sh
-./test.command
-codesign --verify --deep --strict LocalWatch.app
-```
-
-测试脚本需要 Python 3，使用临时本机 HTTP 服务，覆盖 URL 边界、标题解析、HTTP 200 / 503、禁止跟随重定向、离线检测和监听端口发现，无需其他项目运行。要求 18796 和 18797 端口空闲。
-
-## 源码
-
-| 文件 | 用途 |
-| --- | --- |
-| Source/App.swift | 菜单栏、面板、列表、设置及离线记录 |
-| Source/Monitor.swift | 本地 URL 验证、HTTP 检查及端口发现 |
-| Source/Tests.swift | 网络和地址边界测试 |
-| Source/test_server.py | 临时测试服务 |
-| Source/Icon.swift | 图标准备源码 |
-| build.command | 构建与本地签名 |
-
 当前版本为 **v1.1.0**，见 [更新记录](CHANGELOG.md)。
+
+## 支持
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-ffdd00?style=for-the-badge&logo=buymeacoffee&logoColor=black)](https://buymeacoffee.com/ethan6945)
