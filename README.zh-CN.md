@@ -1,5 +1,7 @@
 # LocalWatch
 
+<img src="docs/images/localwatch-icon.png" width="128" alt="LocalWatch app icon">
+
 [English](README.md) | **简体中文**
 
 macOS 菜单栏本地网站管理工具。集中查看和打开正在运行的 localhost 网站，适合同时开发多个 Web 项目、运行本地仪表板及 HTTP API 的用户。

@@ -1,23 +1,69 @@
 import AppKit
-let sizes = [16,32,64,128,256,512,1024]
+
+// Reproducible vector artwork. Usage: swift Source/Icon.swift <iconset-directory>
 let directory = CommandLine.arguments[1]
-for size in sizes {
-    let image = NSImage(size: NSSize(width: size, height: size))
-    image.lockFocus()
-    let s = CGFloat(size)
-    let box = NSRect(x: s*0.055,y:s*0.055,width:s*0.89,height:s*0.89)
-    let path = NSBezierPath(roundedRect:box,xRadius:s*0.21,yRadius:s*0.21)
-    NSGradient(starting:NSColor(red:0.12,green:0.76,blue:0.74,alpha:1),ending:NSColor(red:0.025,green:0.25,blue:0.36,alpha:1))!.draw(in:path,angle:-60)
-    NSColor.white.withAlphaComponent(0.25).setStroke(); path.lineWidth=s*0.012; path.stroke()
-    let pane = NSBezierPath(roundedRect:NSRect(x:s*0.21,y:s*0.28,width:s*0.58,height:s*0.46),xRadius:s*0.065,yRadius:s*0.065)
-    NSColor.white.withAlphaComponent(0.18).setFill(); pane.fill()
-    NSColor.white.withAlphaComponent(0.9).setStroke(); pane.lineWidth=s*0.022; pane.stroke()
-    let line = NSBezierPath(); line.move(to: NSPoint(x:s*0.22,y:s*0.62)); line.line(to:NSPoint(x:s*0.78,y:s*0.62)); line.lineWidth=s*0.016; line.stroke()
-    for x in [0.28,0.33,0.38] { NSColor.white.withAlphaComponent(0.85).setFill(); NSBezierPath(ovalIn:NSRect(x:s*x,y:s*0.662,width:s*0.02,height:s*0.02)).fill() }
-    let pulse = NSBezierPath(); pulse.move(to:NSPoint(x:s*0.30,y:s*0.44)); for (x,y) in [(0.40,0.44),(0.46,0.53),(0.53,0.36),(0.59,0.44),(0.70,0.44)] { pulse.line(to:NSPoint(x:s*x,y:s*y)) }; pulse.lineJoinStyle = .round; pulse.lineCapStyle = .round; pulse.lineWidth=s*0.028; pulse.stroke()
-    NSColor(red:0.45,green:1,blue:0.73,alpha:1).setFill(); NSBezierPath(ovalIn:NSRect(x:s*0.70,y:s*0.22,width:s*0.12,height:s*0.12)).fill()
-    image.unlockFocus()
-    let rep = NSBitmapImageRep(data:image.tiffRepresentation!)!
-    let data = rep.representation(using:.png,properties:[:])!
-    try data.write(to:URL(fileURLWithPath:"\(directory)/\(size).png"))
+try FileManager.default.createDirectory(atPath: directory, withIntermediateDirectories: true)
+func color(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat, _ a: CGFloat = 1) -> NSColor {
+    NSColor(srgbRed: r, green: g, blue: b, alpha: a)
+}
+for pixels in [16, 32, 64, 128, 256, 512, 1024] {
+    let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: pixels, pixelsHigh: pixels,
+                              bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
+                              isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
+    NSGraphicsContext.saveGraphicsState()
+    let context = NSGraphicsContext(bitmapImageRep: rep)!
+    NSGraphicsContext.current = context
+    context.cgContext.scaleBy(x: CGFloat(pixels) / 1024, y: CGFloat(pixels) / 1024)
+    let tile = NSBezierPath(roundedRect: NSRect(x: 64, y: 64, width: 896, height: 896), xRadius: 204, yRadius: 204)
+    NSGraphicsContext.saveGraphicsState()
+    let shadow = NSShadow()
+    shadow.shadowColor = NSColor.black.withAlphaComponent(0.20)
+    shadow.shadowBlurRadius = 22
+    shadow.shadowOffset = NSSize(width: 0, height: -10)
+    shadow.set()
+    color(0.065, 0.09, 0.13).setFill(); tile.fill()
+    NSGraphicsContext.restoreGraphicsState()
+    NSGradient(colors: [color(0.13, 0.19, 0.23), color(0.045, 0.065, 0.105)])!.draw(in: tile, angle: -65)
+    NSGraphicsContext.saveGraphicsState()
+    tile.addClip()
+    NSGradient(starting: color(0.16, 0.85, 0.72, 0.16), ending: color(0.16, 0.85, 0.72, 0))!
+        .draw(fromCenter: NSPoint(x: 250, y: 850), radius: 0, toCenter: NSPoint(x: 250, y: 850), radius: 680, options: [.drawsAfterEndingLocation])
+    NSGraphicsContext.restoreGraphicsState()
+    // A subtle inset edge keeps the silhouette readable on both desktop themes.
+    let rim = NSBezierPath(roundedRect: NSRect(x: 66, y: 66, width: 892, height: 892), xRadius: 202, yRadius: 202)
+    color(0.85, 0.98, 1, 0.13).setStroke(); rim.lineWidth = 3; rim.stroke()
+    // Paired local-host brackets: bold, rounded, and legible down to 16 pixels.
+    let mark = NSBezierPath()
+    mark.move(to: NSPoint(x: 350, y: 645))
+    mark.line(to: NSPoint(x: 245, y: 512))
+    mark.line(to: NSPoint(x: 350, y: 379))
+    mark.move(to: NSPoint(x: 674, y: 645))
+    mark.line(to: NSPoint(x: 779, y: 512))
+    mark.line(to: NSPoint(x: 674, y: 379))
+    mark.lineWidth = 48; mark.lineCapStyle = .round; mark.lineJoinStyle = .round
+    color(0.84, 0.96, 0.96).setStroke(); mark.stroke()
+    // Use the same SF Symbol as the menu bar for a consistent identity.
+    let globeConfig = NSImage.SymbolConfiguration(pointSize: 320, weight: .regular)
+        .applying(NSImage.SymbolConfiguration(paletteColors: [color(0.35, 0.96, 0.80)]))
+    let globe = NSImage(systemSymbolName: "network", accessibilityDescription: nil)!
+        .withSymbolConfiguration(globeConfig)!
+    let globeSize = globe.size
+    let scale = min(330 / globeSize.width, 330 / globeSize.height)
+    let globeRect = NSRect(x: 512 - globeSize.width * scale / 2,
+                           y: 512 - globeSize.height * scale / 2,
+                           width: globeSize.width * scale, height: globeSize.height * scale)
+    globe.draw(in: globeRect)
+    NSGraphicsContext.restoreGraphicsState()
+    let png = rep.representation(using: .png, properties: [:])!
+    let names: [String]
+    switch pixels {
+    case 16: names = ["icon_16x16.png"]
+    case 32: names = ["icon_16x16@2x.png", "icon_32x32.png"]
+    case 64: names = ["icon_32x32@2x.png"]
+    case 128: names = ["icon_128x128.png"]
+    case 256: names = ["icon_128x128@2x.png", "icon_256x256.png"]
+    case 512: names = ["icon_256x256@2x.png", "icon_512x512.png"]
+    default: names = ["icon_512x512@2x.png"]
+    }
+    for name in names { try png.write(to: URL(fileURLWithPath: directory).appendingPathComponent(name)) }
 }

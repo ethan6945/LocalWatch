@@ -1,5 +1,7 @@
 # LocalWatch
 
+<img src="docs/images/localwatch-icon.png" width="128" alt="LocalWatch app icon">
+
 **English** | [简体中文](README.zh-CN.md)
 
 A lightweight macOS menu bar app for discovering, checking, and opening local websites. Built with SwiftUI and Liquid Glass, with no third-party runtime dependencies.
