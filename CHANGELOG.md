@@ -1,20 +1,15 @@
-# 更新记录
+# Changelog
 
-## 未发布
+## v1.1.0 — 2026-10-20
 
-- 增加中英文切换并保留语言选择，增加底部快速退出图标。
-- 可选无在线网站时隐藏菜单栏图标；无在线网站时每 30 秒检查，有在线网站时改为按需检查。
-- 调整窗口圆角与阴影、设置背景宽度和开关右对齐。
-- 移除底部时间、重复退出文字、离线项目数量和清除入口。
-- 清理废弃代码和过期构建产物。
+- Add persistent English / Chinese switching and a direct quit icon.
+- Add optional menu bar hiding when no sites are online.
+- Poll every 30 seconds only after a check finds zero online sites; stop polling when a site responds.
+- Adjust panel corner clipping and shadow handling; make settings full width and right-align switches.
+- Remove the timestamp, duplicate quit label, and offline-history counter / clear controls.
+- Optimize release builds for size and losslessly recompress icon PNG payloads.
+- Add English and Simplified Chinese README navigation and remove obsolete local build artifacts.
 
 ## v1.0.0 — 2026-10-20
 
-首次 GitHub 发布，整理现有功能：
-
-- 菜单栏网站列表、自动发现和浏览器打开。
-- 按需 HTTP 检查、离线隐藏及恢复。
-- 原生自适应面板、手动管理与登录启动设置。
-- 源码、构建脚本和不依赖其他项目的网络测试。
-
-发布包适用于 Apple Silicon / macOS 26+，ad-hoc 签名，未公证。
+Initial GitHub release with local website discovery, HTTP status checks, browser shortcuts, offline-site recovery, adaptive SwiftUI / Liquid Glass UI, manual management, and launch-at-login settings.

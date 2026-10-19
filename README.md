@@ -1,64 +1,73 @@
 # LocalWatch
 
-macOS 菜单栏本地网站管理工具。集中查看和打开正在运行的 localhost 网站，适合同时开发多个 Web 项目、运行本地仪表板及 HTTP API 的用户。
+**English** | [简体中文](README.zh-CN.md)
 
-## 功能
+A lightweight macOS menu bar app for discovering, checking, and opening local websites. Built with SwiftUI and Liquid Glass, with no third-party runtime dependencies.
 
-- 点击菜单栏图标查看网站、HTTP 状态和响应时间，点击卡片在默认浏览器打开。
-- 自动发现当前用户的本机 HTTP 服务，支持手动添加、编辑、复制和移除地址。
-- 检查后无在线网站时每 30 秒刷新；发现至少一个在线网站后停止轮询，只在展开面板或手动刷新时检查。展示上次检查结果，启动时尚未检查不会轮询。
-- 离线网站自动隐藏并记住，恢复后在下一次检查时重新显示。
-- 原生 SwiftUI / Liquid Glass 界面，面板高度随网站数量调整。
-- 面板底部提供 EN / 中 按钮，一键切换中文与英文并记住选择。
-- 支持登录时启动，退出应用不影响网站服务。
-- 可选“无在线网站时隐藏菜单栏图标”（默认关闭）；开启后在检查发现无在线网站时隐藏图标，每 30 秒刷新，发现在线网站后恢复图标并停止轮询。面板展开时保留入口，隐藏后也可再次打开应用调出面板并刷新。
-- 无账号、无遥测上传，配置保存在当前用户的 macOS 偏好设置中。
+## Features
 
-## 安装
+- Discover HTTP services owned by your current user and open them in your default browser.
+- Add, edit, copy, or remove local URLs manually.
+- View HTTP availability and response times in a compact, adaptive panel.
+- After a completed check finds zero online sites, check every 30 seconds. Once at least one site responds, stop polling and check only when the panel opens or you click refresh. No polling before the first check.
+- Optionally hide the menu bar icon when no sites are online. Restore it when a site returns; reopening the app also reveals the panel. The icon stays visible while the panel is open.
+- Switch between English and Chinese with the **EN / 中** button. Your choice is remembered.
+- Launch at login and quit directly with the power icon.
+- Keep settings on your Mac, with no account or telemetry uploads.
 
-需要 **Apple Silicon Mac、macOS 26 或更新版本**。当前发布包仅提供 arm64 架构。
+## Install
 
-从 [Releases](https://github.com/ethan6945/LocalWatch/releases) 下载 ZIP，解压后把 LocalWatch.app 放进 Applications 文件夹，双击启动。应用只出现在菜单栏，无 Dock 图标。
+Requires **Apple Silicon and macOS 26 or later**. Intel builds are not included.
 
-发布包使用 ad-hoc 签名，未经 Apple Developer ID 签名和公证，其他 Mac 可能被 Gatekeeper 拦截。确认来源后可按系统提示在“系统设置 → 隐私与安全性”允许打开，或自行编译源码。
+1. Download `LocalWatch-v1.1.0-macos-arm64.zip` from [Releases](https://github.com/ethan6945/LocalWatch/releases/latest).
+2. Unzip and move `LocalWatch.app` to Applications.
+3. Open it and click its menu bar icon. There is no Dock icon.
 
-## 使用与状态含义
+The app is ad-hoc signed, without Developer ID signing or Apple notarization. Gatekeeper may block it on another Mac. After verifying its source, follow macOS Privacy & Security prompts to allow it, or build from source.
 
-展开面板即可发现服务，右下角设置可调整自动发现、登录启动和无在线网站时隐藏图标。底部提供语言切换与退出图标。
+To verify the download, put the ZIP and `SHA256SUMS.txt` in the same folder and run:
 
-绿色表示 HTTP 200–399，橙色表示 HTTP 400–599。橙色仍计入在线数量；连接失败、超时或 TLS 错误重试一次后归为离线。HTTP 可访问性不代表业务功能全部正常。
+```sh
+shasum -a 256 -c SHA256SUMS.txt
+```
 
-手动地址支持 HTTP / HTTPS，仅限 localhost、127.x.x.x、::1，例如 `http://localhost:3000/`、`http://[::1]:8080/`。检查不跟随重定向。自动发现使用 IPv4 HTTP；HTTPS-only 或 IPv6-only 服务请手动添加。主动移除的地址不会自动重新加入。
+## How status works
 
-## 从源码构建
+Green means HTTP 200–399; orange means HTTP 400–599 and still counts as online. A failed connection, timeout, or TLS error is retried once before the site is hidden. Offline sites are remembered and return on a later successful check. HTTP availability does not establish application health.
 
-安装 Apple Command Line Tools（`xcode-select --install`），运行：
+Manual URLs accept HTTP / HTTPS on `localhost`, `127.x.x.x`, or `::1`, such as `http://localhost:3000/` or `http://[::1]:8080/`. Probes never follow redirects. Automatic discovery uses IPv4 HTTP; add HTTPS-only or IPv6-only sites manually. Removed URLs are excluded from automatic discovery until manually added again.
+
+## Build
+
+Install Apple Command Line Tools with `xcode-select --install`, then run:
 
 ```sh
 ./build.command
 open LocalWatch.app
 ```
 
-无需 Xcode 工程或第三方依赖。脚本生成应用并进行本地签名；遇到 SwiftUI 宏插件不可用时，会尝试已安装的兼容 SDK。需要兼容的 Swift 工具链及 macOS SDK。
+No Xcode project or package manager is required. A compatible Swift toolchain and macOS SDK are needed. The script tries installed SDKs if SwiftUI macro support is unavailable in the selected SDK.
 
-## 测试
+Release builds optimize for size, use whole-module optimization and linker dead stripping, and strip local symbols before signing. Icon PNG payloads are losslessly optimized, preserving their pixel content and available resolutions.
+
+## Test
 
 ```sh
 ./test.command
 codesign --verify --deep --strict LocalWatch.app
 ```
 
-测试脚本需要 Python 3，使用临时本机 HTTP 服务，覆盖 URL 边界、标题解析、HTTP 200 / 503、禁止跟随重定向、离线检测和监听端口发现，无需其他项目运行。要求 18796 和 18797 端口空闲。
+Tests require Python 3 and free ports 18796 / 18797. They cover URL validation, title extraction, HTTP 200 / 503, redirect boundaries, offline detection, and listener discovery using a temporary local server. They do not verify visual appearance, login behavior, or timer transitions in the running app.
 
-## 源码
+## Source layout
 
-| 文件 | 用途 |
+| File | Purpose |
 | --- | --- |
-| Source/App.swift | 菜单栏、面板、列表、设置及离线记录 |
-| Source/Monitor.swift | 本地 URL 验证、HTTP 检查及端口发现 |
-| Source/Tests.swift | 网络和地址边界测试 |
-| Source/test_server.py | 临时测试服务 |
-| Source/Icon.swift | 图标准备源码 |
-| build.command | 构建与本地签名 |
+| `Source/App.swift` | Menu bar, panel, settings, language switching, idle checks |
+| `Source/Monitor.swift` | Local URL validation, HTTP probes, listener discovery |
+| `Source/Tests.swift` | Network and URL boundary tests |
+| `Source/test_server.py` | Temporary HTTP test server |
+| `Source/Icon.swift` | Icon generation source |
+| `build.command` | Size-optimized build and local signing |
 
-首个 GitHub 发布版本为 **v1.0.0**，见 [更新记录](CHANGELOG.md)。
+See [CHANGELOG.md](CHANGELOG.md) for release history.
