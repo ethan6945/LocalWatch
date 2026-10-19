@@ -4,6 +4,12 @@
 
 A lightweight macOS menu bar app for discovering, checking, and opening local websites. Built with SwiftUI and Liquid Glass, with no third-party runtime dependencies.
 
+## Screenshots
+
+![Website dashboard](docs/images/localwatch-dashboard.png)
+
+![Settings](docs/images/localwatch-settings.png)
+
 ## Features
 
 - Discover HTTP services owned by your current user and open them in your default browser.

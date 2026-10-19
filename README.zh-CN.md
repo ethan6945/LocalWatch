@@ -4,6 +4,12 @@
 
 macOS 菜单栏本地网站管理工具。集中查看和打开正在运行的 localhost 网站，适合同时开发多个 Web 项目、运行本地仪表板及 HTTP API 的用户。
 
+## 界面截图
+
+![网站主面板](docs/images/localwatch-dashboard.png)
+
+![设置界面](docs/images/localwatch-settings.png)
+
 ## 功能
 
 - 点击菜单栏图标查看网站、HTTP 状态和响应时间，点击卡片在默认浏览器打开。
